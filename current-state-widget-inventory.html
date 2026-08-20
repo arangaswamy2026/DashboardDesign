@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SonicWall Dashboard Widget Inventory — Current State</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    line-height: 1.6;
+    font-size: 14px;
+  }
+
+  header {
+    background: linear-gradient(135deg, #1a1f2e 0%, #0d1117 100%);
+    border-bottom: 1px solid #2d3748;
+    padding: 36px 48px 28px;
+  }
+  .eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #e85d04; margin-bottom: 10px;
+  }
+  header h1 { font-size: 26px; font-weight: 800; color: #f7fafc; margin-bottom: 6px; }
+  header p  { font-size: 13px; color: #718096; max-width: 680px; line-height: 1.7; }
+
+  /* sticky nav */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: #141820;
+    border-bottom: 1px solid #2d3748;
+    padding: 0 48px;
+    display: flex; gap: 0; overflow-x: auto;
+  }
+  nav a {
+    display: block; padding: 13px 18px;
+    font-size: 12px; font-weight: 500; color: #718096;
+    text-decoration: none; white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  nav a:hover { color: #e2e8f0; border-bottom-color: #e85d04; }
+
+  main { padding: 40px 48px; max-width: 1300px; }
+
+  /* legend */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    padding: 14px 18px; margin-bottom: 36px;
+    background: #1a1f2e; border: 1px solid #2d3748; border-radius: 8px;
+  }
+  .legend-label { font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: #4a5568; margin-right: 4px; }
+  .viz-pill {
+    font-size: 10px; font-weight: 700; padding: 2px 8px;
+    border-radius: 4px; white-space: nowrap;
+  }
+  .vp-kpi      { background: #1c4532; color: #68d391; }
+  .vp-table    { background: #1a365d; color: #63b3ed; }
+  .vp-donut    { background: #744210; color: #faf089; }
+  .vp-line     { background: #7b341e; color: #fbd38d; }
+  .vp-hbar     { background: #44337a; color: #e9d8fd; }
+  .vp-map      { background: #3b2060; color: #d6bcfa; }
+  .vp-panel    { background: #2d3748; color: #a0aec0; }
+  .vp-tabs     { background: #1d3a3a; color: #81e6d9; }
+  .vp-cards    { background: #3d2404; color: #f6ad55; }
+
+  /* dashboard section */
+  .db-section {
+    margin-bottom: 52px;
+  }
+  .db-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 20px; margin-bottom: 0;
+    background: #141820;
+    border: 1px solid #2d3748;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+  }
+  .db-badge {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 4px 10px;
+    border-radius: 5px; color: #fff; flex-shrink: 0;
+    background: #e85d04;
+  }
+  .db-badge.nsm   { background: #2b6cb0; }
+  .db-badge.ap    { background: #276749; }
+  .db-badge.cc    { background: #6b21a8; }
+  .db-badge.mdr   { background: #9d174d; }
+  .db-badge.cse   { background: #0e7490; }
+  .db-badge.ep    { background: #4a5568; }
+
+  .db-header-text h2 { font-size: 16px; font-weight: 700; color: #f7fafc; }
+  .db-context { font-size: 11px; color: #4a5568; margin-top: 2px; }
+
+  /* table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    border: 1px solid #2d3748;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+  }
+  thead th {
+    background: #0d1117;
+    color: #4a5568;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 10px 16px; text-align: left;
+    border-bottom: 1px solid #2d3748;
+    border-right: 1px solid #2d3748;
+  }
+  thead th:last-child { border-right: none; }
+  tbody tr { border-bottom: 1px solid #1e2535; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:nth-child(even) td { background: #141820; }
+  tbody tr:hover td { background: #1e2535; }
+  tbody td {
+    padding: 10px 16px; vertical-align: top;
+    border-right: 1px solid #1e2535; color: #a0aec0;
+  }
+  tbody td:last-child { border-right: none; }
+
+  /* column styles */
+  td.col-group {
+    font-weight: 600; color: #718096; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    white-space: nowrap; width: 180px;
+  }
+  td.col-widget { font-weight: 600; color: #e2e8f0; width: 220px; }
+  td.col-data   { color: #a0aec0; line-height: 1.6; }
+  td.col-viz    { white-space: nowrap; }
+
+  /* group color rows */
+  tr.group-row td { background: #111827 !important; }
+  tr.group-row td.col-group { color: #63b3ed; }
+
+  /* summary strip */
+  .summary-strip {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-bottom: 40px;
+  }
+  .summary-chip {
+    background: #1a1f2e; border: 1px solid #2d3748;
+    border-radius: 8px; padding: 12px 18px;
+    display: flex; flex-direction: column; gap: 4px;
+    min-width: 130px;
+  }
+  .chip-num  { font-size: 22px; font-weight: 800; color: #e85d04; line-height: 1; }
+  .chip-label { font-size: 10px; color: #718096; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* page divider */
+  .divider {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #4a5568;
+    display: flex; align-items: center; gap: 12px;
+    margin: 48px 0 32px;
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px; background: #2d3748;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">SonicWall UUIF · Unified Dashboard Research · August 2026</div>
+  <h1>Current State Widget Inventory</h1>
+  <p>A complete table of every widget, data point, and visualization format across all 7 existing SonicWall product dashboards — the baseline audit before designing the Unified Dashboard.</p>
+</header>
+
+<nav>
+  <a href="#um">UM Overview</a>
+  <a href="#nsm">NSM Firewalls</a>
+  <a href="#ap-sw">APs &amp; Switches</a>
+  <a href="#cc">Capture Client</a>
+  <a href="#cc-mdr">CC MDR</a>
+  <a href="#cse">Cloud Secure Edge</a>
+  <a href="#ep">Endpoint Security</a>
+</nav>
+
+<main>
+
+  <!-- Summary chips -->
+  <div class="summary-strip">
+    <div class="summary-chip"><div class="chip-num">7</div><div class="chip-label">Dashboards audited</div></div>
+    <div class="summary-chip"><div class="chip-num">9</div><div class="chip-label">Screens reviewed</div></div>
+    <div class="summary-chip"><div class="chip-num">50+</div><div class="chip-label">Individual widgets</div></div>
+    <div class="summary-chip"><div class="chip-num">6</div><div class="chip-label">Viz types in use</div></div>
+  </div>
+
+  <!-- Viz legend -->
+  <div class="legend">
+    <span class="legend-label">Visualization types</span>
+    <span class="viz-pill vp-kpi">KPI / Stat Tile</span>
+    <span class="viz-pill vp-table">Table</span>
+    <span class="viz-pill vp-donut">Donut Chart</span>
+    <span class="viz-pill vp-line">Line Chart</span>
+    <span class="viz-pill vp-hbar">Horizontal Bar</span>
+    <span class="viz-pill vp-map">Map</span>
+    <span class="viz-pill vp-panel">Info Panel</span>
+    <span class="viz-pill vp-tabs">Tab Group</span>
+    <span class="viz-pill vp-cards">Card Grid</span>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 1. UM -->
+  <!-- ============================================================ -->
+  <div class="db-section" id="um">
+    <div class="db-header">
+      <span class="db-badge">UM</span>
+      <div class="db-header-text">
+        <h2>Unified Management — Global Overview</h2>
+        <div class="db-context">Source: UM.jpg · UM2.jpg &nbsp;|&nbsp; Scope: All Tenants (global) &nbsp;|&nbsp; 7-day / 24h windows</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Section / Group</th>
+          <th>Widget Name</th>
+          <th>Data Shown</th>
+          <th>Visualization</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-group">Product Cards</td>
+          <td class="col-widget">Firewall Card</td>
+          <td class="col-data">Total Devices (112), Need Attention count (2 warnings, 6 EOL)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Cloud Secure Edge Card</td>
+          <td class="col-data">Total Active Licenses (2) — no device data; "Learn More" CTA only</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Access Point Card</td>
+          <td class="col-data">Total Devices (10), Need Attention (1)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Switch Card</td>
+          <td class="col-data">Total Devices (9), Need Attention (0)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Capture Client Card</td>
+          <td class="col-data">Total Endpoints (1), Need Attention (1)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Capture Client MDR Card</td>
+          <td class="col-data">Total Endpoints (2), Need Attention (0)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">SMA 1000 Card</td>
+          <td class="col-data">Total Devices (6) — "Coming Soon" tag; no operational data</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Org Summary Sidebar</td>
+          <td class="col-widget">Tenant Count</td>
+          <td class="col-data">Total Tenants managed (98)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Need Attention Count</td>
+          <td class="col-data">Tenants flagged as needing attention (5) — no drill-down detail</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Create Tenant CTA</td>
+          <td class="col-data">Action button — navigates to tenant provisioning flow</td>
+          <td class="col-viz"><span class="viz-pill vp-panel">CTA Button</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Notifications — Map View <em style="color:#63171b;font-size:10px;">(default)</em></td>
+          <td class="col-widget">World Map</td>
+          <td class="col-data">Device pins colour-coded by severity: Emergency/Critical = red, Alert/Warning = orange, Notice/Info = blue</td>
+          <td class="col-viz"><span class="viz-pill vp-map">Map</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Notification Totals (map context)</td>
+          <td class="col-data">Total (1), Security (0), System (0), License (1)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Notifications — List View <em style="color:#4a5568;font-size:10px;">(hidden)</em></td>
+          <td class="col-widget">Alert Log Table</td>
+          <td class="col-data">Columns: Local Time, Message, Priority (Info / Warning / Critical), Tenant, Alert State (New), Source IP, Type (Interfaces / Device Mgmt), Friendly Name, Category (System), Action — 7-day window</td>
+          <td class="col-viz"><span class="viz-pill vp-table">Table</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Alert Totals</td>
+          <td class="col-data">Total (237), Security (7), System (229), License (1)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Product Sub-tabs</td>
+          <td class="col-data">Filter tabs: Firewalls / Access Points / Switches / Capture Client / Capture Client MDR</td>
+          <td class="col-viz"><span class="viz-pill vp-tabs">Tab Group</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 2. NSM -->
+  <!-- ============================================================ -->
+  <div class="db-section" id="nsm">
+    <div class="db-header">
+      <span class="db-badge nsm">NSM</span>
+      <div class="db-header-text">
+        <h2>NSM Firewalls — System Dashboard</h2>
+        <div class="db-context">Source: NSM.jpg &nbsp;|&nbsp; Scope: All Tenants → North America (NSM) &nbsp;|&nbsp; Devices tab</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Section / Group</th>
+          <th>Widget Name</th>
+          <th>Data Shown</th>
+          <th>Visualization</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-group">Top-line KPIs</td>
+          <td class="col-widget">Total Firewalls</td>
+          <td class="col-data">Overall firewall device count (22)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Offline Firewalls</td>
+          <td class="col-data">Devices currently offline (22)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Expired Licenses</td>
+          <td class="col-data">Count of devices with expired licenses (4)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Groups</td>
+          <td class="col-data">Total device group count (44)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Firewall Overview</td>
+          <td class="col-widget">Status Breakdown</td>
+          <td class="col-data">Dual concentric rings showing: Online &amp; In Sync (0), Offline (22, red outer ring), Online &amp; Out of Sync (0), Device Group Unassigned (22, purple inner ring), Expired Licenses (4, grey)</td>
+          <td class="col-viz"><span class="viz-pill vp-donut">Donut (nested)</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Geo Map</td>
+          <td class="col-widget">World Map with Device Pins</td>
+          <td class="col-data">Location pins (India, unknown regions); hover tooltip shows Online / Offline / Out of Sync / Licenses Expired counts per location</td>
+          <td class="col-viz"><span class="viz-pill vp-map">Map</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Alert Center</td>
+          <td class="col-widget">Alert Category Counts</td>
+          <td class="col-data">ALL (12), Device (2), Config (0), User (10), General (0)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Alert Log Table</td>
+          <td class="col-data">Columns: #, Local Time, Category, Priority (Notice), Source IP, Tenant Name, Message text, User</td>
+          <td class="col-viz"><span class="viz-pill vp-table">Table</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 3. AP / Switches -->
+  <!-- ============================================================ -->
+  <div class="db-section" id="ap-sw">
+    <div class="db-header">
+      <span class="db-badge ap">AP / SW</span>
+      <div class="db-header-text">
+        <h2>Access Points &amp; Switches — Dashboard</h2>
+        <div class="db-context">Source: Access points.jpg &nbsp;|&nbsp; Tenant: Acme Tenant 1 — All Locations &nbsp;|&nbsp; Last 30 Days</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Section / Group</th>
+          <th>Widget Name</th>
+          <th>Data Shown</th>
+          <th>Visualization</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-group">Top-line KPIs</td>
+          <td class="col-widget">Top Locations</td>
+          <td class="col-data">Count of top locations (2)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Total Switches</td>
+          <td class="col-data">Switch device count (2)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Total Access Points</td>
+          <td class="col-data">AP device count (3)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Total Clients (AP)</td>
+          <td class="col-data">Connected client count across APs (13)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Upload / Download Throughput</td>
+          <td class="col-data">Aggregate AP traffic — Upload 417.3 MB / Download 2.4 GB</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Device Status</td>
+          <td class="col-widget">AP Status Breakdown</td>
+          <td class="col-data">Multi-ring donut: On (2, green 40%), Off (2, red 40%), Unmanaged (1, yellow 20%), Expired (2, grey) — with percentage labels</td>
+          <td class="col-viz"><span class="viz-pill vp-donut">Donut (multi-ring)</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Geo Map</td>
+          <td class="col-widget">World Map with Location Pins</td>
+          <td class="col-data">Location pins; hover card shows: Switches in use, Access Points in use, Clients ever connected, AP Traffic (Upload/Download), Nested Locations, Nested Zones</td>
+          <td class="col-viz"><span class="viz-pill vp-map">Map</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Alert Center</td>
+          <td class="col-widget">Alert Severity Totals</td>
+          <td class="col-data">High (1), Medium (326), Low (0), Total (327)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Alert Log Table</td>
+          <td class="col-data">Columns: Time, Priority (Critical/Warning), Device Name, Type (Device Status/System), Subtype (License/POE), Source; expandable rows with full alert description text</td>
+          <td class="col-viz"><span class="viz-pill vp-table">Table</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Threat Center</td>
+          <td class="col-widget">Threat Center Tab</td>
+          <td class="col-data">Tab present — detailed content not captured in audit</td>
+          <td class="col-viz"><span class="viz-pill vp-tabs">Tab</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 4. Capture Client -->
+  <!-- ============================================================ -->
+  <div class="db-section" id="cc">
+    <div class="db-header">
+      <span class="db-badge cc">CC</span>
+      <div class="db-header-text">
+        <h2>Capture Client — Single-Tenant Dashboard</h2>
+        <div class="db-context">Source: Capture Client 1.jpg &nbsp;|&nbsp; Tenant: ccqanoam_premier &nbsp;|&nbsp; Last 30 Days &nbsp;|&nbsp; Updated 29/05/2026</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Section / Group</th>
+          <th>Widget Name</th>
+          <th>Data Shown</th>
+          <th>Visualization</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-group">Security Summary KPIs</td>
+          <td class="col-widget">Affected Devices</td>
+          <td class="col-data">Total (0); sub-breakdown: Infected Devices, Pending Actions, Offline Devices, Decommissioned Devices</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI Tile</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Unresolved Threats</td>
+          <td class="col-data">Total (0); sub-breakdown: Not Mitigated Threats, Mitigated Threats, Marked as Benign</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI Tile</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Vulnerable Applications</td>
+          <td class="col-data">Total (0); sub-breakdown by severity: Critical, High, Medium, Low</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI Tile</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Premier Licenses</td>
+          <td class="col-data">Used/Total (0/0), Expiry status; Download Client Installer links (Windows / Mac / Linux)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI Tile</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Threat Analytics</td>
+          <td class="col-widget">S1 Agent Coverage</td>
+          <td class="col-data">Agent version distribution across endpoints (no data in demo)</td>
+          <td class="col-viz"><span class="viz-pill vp-panel">Info Panel</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Threats Detected By</td>
+          <td class="col-data">Detection source breakdown (engine / rule / behaviour)</td>
+          <td class="col-viz"><span class="viz-pill vp-panel">Info Panel</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Threat History</td>
+          <td class="col-data">Last 7 Days — 3 series: Not Mitigated / Mitigated / Marked as Benign (0–1.0 scale)</td>
+          <td class="col-viz"><span class="viz-pill vp-line">Line Chart</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Top Threat Classification</td>
+          <td class="col-data">Threat type breakdown (Malware, PUA, Exploit, etc.)</td>
+          <td class="col-viz"><span class="viz-pill vp-panel">Info Panel</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Web &amp; Endpoint Activity</td>
+          <td class="col-widget">CC Agent Coverage</td>
+          <td class="col-data">Client version distribution across managed endpoints</td>
+          <td class="col-viz"><span class="viz-pill vp-panel">Info Panel</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Top Blocked Categories</td>
+          <td class="col-data">Web category name + block count — top N ranked</td>
+          <td class="col-viz"><span class="viz-pill vp-hbar">Horizontal Bar</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Top Blocked Domains</td>
+          <td class="col-data">Domain name + block count — top N ranked</td>
+          <td class="col-viz"><span class="viz-pill vp-hbar">Horizontal Bar</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Top Blocked Users</td>
+          <td class="col-data">Username + block count — top N ranked</td>
+          <td class="col-viz"><span class="viz-pill vp-hbar">Horizontal Bar</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 5. CC MDR -->
+  <!-- ============================================================ -->
+  <div class="db-section" id="cc-mdr">
+    <div class="db-header">
+      <span class="db-badge mdr">CC MDR</span>
+      <div class="db-header-text">
+        <h2>Capture Client MDR — Multi-Tenant Dashboard</h2>
+        <div class="db-context">Source: Capture Client MDR.jpg · Capture Client.jpg &nbsp;|&nbsp; Scope: All Tenants (global) &nbsp;|&nbsp; Updated 29/05/2026</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Section / Group</th>
+          <th>Widget Name</th>
+          <th>Data Shown</th>
+          <th>Visualization</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-group">Tenant Health Table</td>
+          <td class="col-widget">Multi-Tenant Health List</td>
+          <td class="col-data">Paginated (1–10 of 13 tenants); columns: Status (✓), Tenant Name, Infected Devices, Unresolved Threats, Vulnerable Applications, Offline Devices, Pending Updates, Policies Inherited (x/4), Licenses (type / used/total)</td>
+          <td class="col-viz"><span class="viz-pill vp-table">Table (paginated)</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Right-Rail Summaries</td>
+          <td class="col-widget">Top Tenants by Blocked Web Requests</td>
+          <td class="col-data">Tenant name + blocked web request count — top N ranked</td>
+          <td class="col-viz"><span class="viz-pill vp-hbar">Horizontal Bar</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Top Tenants by Blocked Categories</td>
+          <td class="col-data">Category + tenant name ranked by block count</td>
+          <td class="col-viz"><span class="viz-pill vp-hbar">Horizontal Bar</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Top Client Versions</td>
+          <td class="col-data">Agent version distribution across all tenants</td>
+          <td class="col-viz"><span class="viz-pill vp-panel">Info Panel</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Bottom Panels</td>
+          <td class="col-widget">Threats by Type</td>
+          <td class="col-data">Malware 38% (dominant type shown); Affected Tenants (9), Affected Devices (12); per-tenant device count list below chart</td>
+          <td class="col-viz"><span class="viz-pill vp-donut">Donut Chart</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Most Recent Detections</td>
+          <td class="col-data">Columns: File ID (threat hash / name), Tenant Name, Affected Devices (hostname + OS icon), Mitigation Status</td>
+          <td class="col-viz"><span class="viz-pill vp-table">Table</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Web Attempts Blocked</td>
+          <td class="col-data">Columns: Tenant Name, Total Blocked, Ads, Email, Free Software, Portals, Others</td>
+          <td class="col-viz"><span class="viz-pill vp-table">Table</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Top Affected Tenants <em style="color:#4a5568;font-size:10px;">(older UI)</em></td>
+          <td class="col-widget">Affected Tenant Cards</td>
+          <td class="col-data">Top 4 tenants sorted by infected device count; each card shows: Tenant Name, Infected Devices (highlighted orange), Unresolved Threats, Vulnerable Apps</td>
+          <td class="col-viz"><span class="viz-pill vp-cards">Card Grid</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 6. CSE -->
+  <!-- ============================================================ -->
+  <div class="db-section" id="cse">
+    <div class="db-header">
+      <span class="db-badge cse">CSE</span>
+      <div class="db-header-text">
+        <h2>Cloud Secure Edge — Dashboard</h2>
+        <div class="db-context">Source: CSE.jpg &nbsp;|&nbsp; Last 30 Days</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Section / Group</th>
+          <th>Widget Name</th>
+          <th>Data Shown</th>
+          <th>Visualization</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-group">Top-line KPIs</td>
+          <td class="col-widget">Devices</td>
+          <td class="col-data">Total enrolled devices (8)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Users</td>
+          <td class="col-data">Total active users (6)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Services</td>
+          <td class="col-data">Total services configured (2)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Policies</td>
+          <td class="col-data">Total policies in place (7)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Roles</td>
+          <td class="col-data">Total roles defined (4)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Connectors</td>
+          <td class="col-data">Total connectors (1)</td>
+          <td class="col-viz"><span class="viz-pill vp-kpi">KPI</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Device &amp; Policy Breakdowns</td>
+          <td class="col-widget">Devices by Operating System</td>
+          <td class="col-data">Windows vs macOS split</td>
+          <td class="col-viz"><span class="viz-pill vp-donut">Donut Chart</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Devices by Trust Level</td>
+          <td class="col-data">High / Medium / Low trust distribution (all green = all High in demo)</td>
+          <td class="col-viz"><span class="viz-pill vp-donut">Donut Chart</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Policies by Status</td>
+          <td class="col-data">Active vs Inactive policy count breakdown</td>
+          <td class="col-viz"><span class="viz-pill vp-donut">Donut Chart</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Connectors by Status</td>
+          <td class="col-data">Pending / Reporting / PartiallyReporting / Terminated split</td>
+          <td class="col-viz"><span class="viz-pill vp-donut">Donut Chart</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Top 10 Flexible Widget</td>
+          <td class="col-widget">Top 10 Activity Selector</td>
+          <td class="col-data">Dropdown options: Most Active Users by Services Accessed / Services Accessed by Unique Users / Users Accessing Services with Unregistered Devices / Services Accessed by Unregistered Devices</td>
+          <td class="col-viz"><span class="viz-pill vp-hbar">H-Bar (dropdown)</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 7. Endpoint Security -->
+  <!-- ============================================================ -->
+  <div class="db-section" id="ep">
+    <div class="db-header">
+      <span class="db-badge ep">ENDPOINT</span>
+      <div class="db-header-text">
+        <h2>Endpoint Security — Dashboard <span style="font-size:12px;font-weight:400;color:#4a5568;">(older UI)</span></h2>
+        <div class="db-context">Source: Endpoint Security.png &nbsp;|&nbsp; All Tenants view &nbsp;|&nbsp; Updated 19/04/2020</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Section / Group</th>
+          <th>Widget Name</th>
+          <th>Data Shown</th>
+          <th>Visualization</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-group">Multi-Tenant Threat Summary</td>
+          <td class="col-widget">Top Affected Tenants (tabbed)</td>
+          <td class="col-data">Toggle between 3 views: Infected Devices / Unresolved Threats / Vulnerable Applications; 4 tenant cards per view showing Name, Infected Devices (highlighted), Unresolved Threats, Vulnerable Apps</td>
+          <td class="col-viz"><span class="viz-pill vp-cards">Card Grid + Tabs</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Threat Breakdown</td>
+          <td class="col-widget">Threats by Type</td>
+          <td class="col-data">Malware 38% (dominant); Affected Tenants (9), Affected Devices (12); per-tenant device count list below</td>
+          <td class="col-viz"><span class="viz-pill vp-donut">Donut Chart</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Most Recent Detections</td>
+          <td class="col-data">Columns: File ID (threat filename / hash), Tenant Name, Affected Devices (hostname + OS icon)</td>
+          <td class="col-viz"><span class="viz-pill vp-table">Table</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Web Attempts Blocked</td>
+          <td class="col-data">Columns: Tenant Name, Total Blocked, Ads, Email, Free Software, Portals, Others</td>
+          <td class="col-viz"><span class="viz-pill vp-table">Table</span></td>
+        </tr>
+        <tr>
+          <td class="col-group">Help / Onboarding Sidebar</td>
+          <td class="col-widget">Quick Action Pad</td>
+          <td class="col-data">Download client installer (Windows/Mac/Linux), Raise a ticket CTA</td>
+          <td class="col-viz"><span class="viz-pill vp-panel">CTA Panel</span></td>
+        </tr>
+        <tr>
+          <td class="col-group"></td>
+          <td class="col-widget">Live Feed — SentinelOne Articles</td>
+          <td class="col-data">Recent SonicWall/SentinelOne blog articles — title, author, date, thumbnail; external links</td>
+          <td class="col-viz"><span class="viz-pill vp-panel">Live Feed</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"><span>End of Current State Audit</span></div>
+
+  <p style="font-size:11px;color:#4a5568;text-align:center;padding-bottom:48px;">
+    Source: Unified Dashboard Research · SonicWall UUIF Design Team · Last updated August 2026
+  </p>
+
+</main>
+
+<script>
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('.db-section');
+  const navLinks = document.querySelectorAll('nav a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(a => {
+          a.style.color = a.getAttribute('href') === '#' + entry.target.id ? '#e2e8f0' : '';
+          a.style.borderBottomColor = a.getAttribute('href') === '#' + entry.target.id ? '#e85d04' : '';
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
