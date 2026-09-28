@@ -1,0 +1,562 @@
+{
+  "um-active-product-overview": {
+    "kind": "kpi",
+    "items": [
+      { "label": "Firewalls", "value": 110, "tone": "brand" },
+      { "label": "Access Points", "value": 10, "tone": "success" },
+      { "label": "Switches", "value": 9, "tone": "success" },
+      { "label": "Capture Client", "value": 2, "tone": "low" },
+      { "label": "Cloud Secure Edge", "value": 2, "tone": "low" },
+      { "label": "SMA 1000", "value": 6, "tone": "neutral" }
+    ],
+    "note": "6 of 7 SonicWall products active across 12 tenants"
+  },
+  "um-org-summary": {
+    "kind": "kpi",
+    "items": [
+      { "label": "Tenants", "value": 98, "tone": "brand" },
+      { "label": "Need Attention", "value": 2, "tone": "critical" }
+    ],
+    "note": "2 tenants require immediate action"
+  },
+  "um-notifications": {
+    "kind": "table",
+    "rows": [
+      { "tone": "low", "msg": "Device interface X0 up &middot; Acme Tenant 1", "time": "2m ago" },
+      { "tone": "medium", "msg": "Device interface X2 down &middot; Westfield IT", "time": "14m ago" },
+      { "tone": "critical", "msg": "License expired &middot; Northgate Health", "time": "1h ago" },
+      { "tone": "low", "msg": "Firmware update available &middot; TZ-370", "time": "3h ago" },
+      { "tone": "medium", "msg": "Policy sync delayed &middot; Tyrell Corp", "time": "5h ago" }
+    ],
+    "footnote": "141 total &middot; 1 security &middot; 140 system"
+  },
+
+  "nsm-firewall-overview": {
+    "kind": "donut",
+    "legend": "full",
+    "slices": [
+      { "label": "Online", "value": 98, "tone": "success" },
+      { "label": "Offline", "value": 8, "tone": "critical" },
+      { "label": "Degraded", "value": 4, "tone": "medium" }
+    ],
+    "centerLabel": "110",
+    "footnote": "110 firewalls across 12 tenants",
+    "mapNote": "Geo distribution map available in full report"
+  },
+  "nsm-alert-center": {
+    "kind": "table",
+    "rows": [
+      { "tone": "critical", "msg": "BGP route change &mdash; 4 branch sites offline &middot; Northgate Health", "time": "47m ago" },
+      { "tone": "high", "msg": "CVE-2024-3400 active exploitation &middot; Acme Tenant 1", "time": "2h ago" },
+      { "tone": "medium", "msg": "VPN tunnel flapping &middot; Cyberdyne Systems", "time": "3h ago" },
+      { "tone": "low", "msg": "Firmware update applied &middot; TZ-370", "time": "6h ago" }
+    ],
+    "footnote": "237 total &middot; 7 security &middot; 229 system"
+  },
+  "nsm-traffic-distribution": {
+    "kind": "line",
+    "labels": ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+    "values": [420, 468, 512, 447, 590, 610, 534],
+    "min": 380, "max": 650, "tone": "brand",
+    "valueSuffix": " GB",
+    "footnote": "3.6 TB total this week &middot; peak Friday",
+    "mapNote": "Geo traffic map available in full report"
+  },
+  "nsm-top-users": {
+    "kind": "list", "bar": true,
+    "items": [
+      { "label": "jsmith@acme.com", "value": 812 },
+      { "label": "mwayne@wayne.com", "value": 654 },
+      { "label": "achen@northgate.com", "value": 590 },
+      { "label": "rpatel@tyrell.com", "value": 511 },
+      { "label": "kmoore@cyberdyne.com", "value": 402 }
+    ],
+    "footnote": "By session count, last 7 days"
+  },
+  "nsm-observed-threats": {
+    "kind": "line",
+    "labels": ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+    "values": [3, 5, 2, 8, 6, 4, 7],
+    "min": 0, "max": 10, "tone": "critical",
+    "footnote": "35 threats observed this week"
+  },
+  "nsm-top-firewalls-sessions": {
+    "kind": "list", "bar": true,
+    "items": [
+      { "label": "FW-ACME-01", "value": 128400 },
+      { "label": "FW-NORTH-03", "value": 98210 },
+      { "label": "FW-TC-07", "value": 87650 },
+      { "label": "FW-WEST-02", "value": 76300 },
+      { "label": "FW-CYB-05", "value": 65120 }
+    ],
+    "footnote": "Sessions, last 24 hours"
+  },
+  "nsm-insights": {
+    "kind": "kpi",
+    "items": [
+      { "label": "Bandwidth Saved", "value": "1.2 TB", "tone": "success" },
+      { "label": "Threats Blocked", "value": 1840, "tone": "critical" },
+      { "label": "Avg Uptime", "value": "99.8%", "tone": "brand" }
+    ],
+    "note": "Aggregated across 110 firewalls"
+  },
+  "nsm-top-apps-sessions": {
+    "kind": "hbar",
+    "items": [
+      { "label": "HTTPS", "value": 42500, "tone": "brand" },
+      { "label": "DNS", "value": 18200, "tone": "low" },
+      { "label": "SSH", "value": 9400, "tone": "medium" },
+      { "label": "SMTP", "value": 6100, "tone": "medium" },
+      { "label": "RDP", "value": 3800, "tone": "high" }
+    ],
+    "footnote": "By session count, last 7 days"
+  },
+  "nsm-top-addresses-sessions": {
+    "kind": "hbar",
+    "items": [
+      { "label": "10.10.4.22", "value": 15200, "tone": "brand" },
+      { "label": "10.10.2.5", "value": 12800, "tone": "low" },
+      { "label": "192.168.1.44", "value": 9700, "tone": "brand" },
+      { "label": "10.10.8.11", "value": 8400, "tone": "low" },
+      { "label": "192.168.5.90", "value": 6200, "tone": "neutral" }
+    ],
+    "footnote": "By session count, last 7 days"
+  },
+  "nsm-top-users-sessions": {
+    "kind": "hbar",
+    "items": [
+      { "label": "jsmith@acme.com", "value": 3400, "tone": "brand" },
+      { "label": "mwayne@wayne.com", "value": 2870, "tone": "low" },
+      { "label": "achen@northgate.com", "value": 2510, "tone": "brand" },
+      { "label": "rpatel@tyrell.com", "value": 2200, "tone": "low" },
+      { "label": "kmoore@cyberdyne.com", "value": 1980, "tone": "neutral" }
+    ],
+    "footnote": "Sessions, last 7 days"
+  },
+  "nsm-top-web-categories": {
+    "kind": "hbar",
+    "items": [
+      { "label": "Social Media", "value": 8600, "tone": "high" },
+      { "label": "Streaming Media", "value": 6200, "tone": "medium" },
+      { "label": "Business/Economy", "value": 5100, "tone": "brand" },
+      { "label": "Shopping", "value": 3400, "tone": "low" },
+      { "label": "News", "value": 2100, "tone": "neutral" }
+    ],
+    "footnote": "By session count, last 7 days"
+  },
+  "nsm-top-intrusions": {
+    "kind": "hbar",
+    "items": [
+      { "label": "SQL Injection Attempt", "value": 340, "tone": "critical" },
+      { "label": "Cross-Site Scripting", "value": 210, "tone": "high" },
+      { "label": "Directory Traversal", "value": 145, "tone": "high" },
+      { "label": "Buffer Overflow", "value": 98, "tone": "medium" },
+      { "label": "Command Injection", "value": 62, "tone": "medium" }
+    ],
+    "footnote": "Signature hits, last 7 days"
+  },
+  "nsm-top-viruses": {
+    "kind": "hbar",
+    "items": [
+      { "label": "Trojan.GenKD", "value": 88, "tone": "critical" },
+      { "label": "Ransom.Locky", "value": 41, "tone": "critical" },
+      { "label": "Worm.Agent", "value": 54, "tone": "high" },
+      { "label": "Trojan.Downloader", "value": 27, "tone": "high" },
+      { "label": "Adware.Generic", "value": 33, "tone": "medium" }
+    ],
+    "footnote": "Signature hits, last 7 days"
+  },
+  "nsm-top-spyware": {
+    "kind": "hbar",
+    "items": [
+      { "label": "Spy.Keylogger", "value": 39, "tone": "critical" },
+      { "label": "Spy.Tracker", "value": 62, "tone": "high" },
+      { "label": "Spy.FormGrabber", "value": 18, "tone": "high" },
+      { "label": "Spy.Adware", "value": 35, "tone": "medium" },
+      { "label": "Spy.BrowserHijack", "value": 24, "tone": "medium" }
+    ],
+    "footnote": "Signature hits, last 7 days"
+  },
+  "nsm-top-botnet": {
+    "kind": "hbar",
+    "items": [
+      { "label": "Mirai.C2", "value": 46, "tone": "critical" },
+      { "label": "Emotet.C2", "value": 31, "tone": "critical" },
+      { "label": "Qakbot.C2", "value": 22, "tone": "high" },
+      { "label": "TrickBot.C2", "value": 15, "tone": "high" },
+      { "label": "Gafgyt.C2", "value": 9, "tone": "medium" }
+    ],
+    "footnote": "C2 callback hits, last 7 days"
+  },
+  "nsm-uptime-report": {
+    "kind": "kpi",
+    "items": [
+      { "label": "Avg Uptime", "value": "99.94%", "tone": "success" },
+      { "label": "Downtime", "value": "38 min", "tone": "medium" },
+      { "label": "Longest Outage", "value": "12 min", "tone": "high" }
+    ],
+    "note": "Rolling 30-day window across 110 firewalls"
+  },
+
+  "wnm-overview": {
+    "kind": "kpi",
+    "items": [
+      { "label": "Access Points", "value": 10, "tone": "success" },
+      { "label": "Switches", "value": 9, "tone": "success" },
+      { "label": "Clients", "value": 39, "tone": "brand" },
+      { "label": "Rogue APs", "value": 0, "tone": "success" }
+    ]
+  },
+  "wnm-alert-center": {
+    "kind": "table",
+    "rows": [
+      { "tone": "low", "msg": "AP-3F-North rebooted &middot; Acme Tenant 1", "time": "12m ago" },
+      { "tone": "medium", "msg": "Switch port flapping SW-02 &middot; Westfield IT", "time": "40m ago" },
+      { "tone": "high", "msg": "AP offline &mdash; AP-Lobby &middot; Northgate Health", "time": "1h ago" },
+      { "tone": "low", "msg": "Firmware update applied &middot; SW-9", "time": "4h ago" }
+    ],
+    "footnote": "18 total &middot; 0 critical"
+  },
+  "wnm-recent-threats": {
+    "kind": "table",
+    "rows": [
+      { "tone": "high", "msg": "Rogue AP detected &mdash; SSID clone &middot; Tyrell Corp", "time": "22m ago" },
+      { "tone": "medium", "msg": "Deauth flood detected &middot; Acme Tenant 1", "time": "1h ago" },
+      { "tone": "low", "msg": "Weak-encryption client blocked &middot; Cyberdyne Systems", "time": "3h ago" }
+    ],
+    "footnote": "3 threats this week"
+  },
+  "wnm-top-aps-traffic": {
+    "kind": "donut", "legend": "full",
+    "slices": [
+      { "label": "AP-Lobby", "value": 38, "tone": "brand" },
+      { "label": "AP-3F-North", "value": 27, "tone": "low" },
+      { "label": "AP-2F-East", "value": 19, "tone": "medium" },
+      { "label": "AP-Warehouse", "value": 11, "tone": "high" },
+      { "label": "AP-Guest", "value": 5, "tone": "neutral" }
+    ],
+    "centerLabel": "100%", "valueSuffix": "%",
+    "footnote": "Share of total AP traffic, 7d"
+  },
+  "wnm-top-clients-traffic": {
+    "kind": "donut", "legend": "full",
+    "slices": [
+      { "label": "iPhone 15", "value": 34, "tone": "brand" },
+      { "label": "MacBook Pro", "value": 26, "tone": "low" },
+      { "label": "Windows Laptop", "value": 22, "tone": "medium" },
+      { "label": "iPad", "value": 12, "tone": "high" },
+      { "label": "Android", "value": 6, "tone": "neutral" }
+    ],
+    "centerLabel": "100%", "valueSuffix": "%",
+    "footnote": "Share of total client traffic, 7d"
+  },
+  "wnm-top-ssids-traffic": {
+    "kind": "donut", "legend": "full",
+    "slices": [
+      { "label": "Acme-Corp", "value": 44, "tone": "brand" },
+      { "label": "Acme-Guest", "value": 21, "tone": "low" },
+      { "label": "Acme-IoT", "value": 18, "tone": "medium" },
+      { "label": "Acme-Secure", "value": 12, "tone": "high" },
+      { "label": "Acme-Voice", "value": 5, "tone": "neutral" }
+    ],
+    "centerLabel": "100%", "valueSuffix": "%",
+    "footnote": "Share of total SSID traffic, 7d"
+  },
+  "wnm-top-zones-traffic": {
+    "kind": "donut", "legend": "full",
+    "slices": [
+      { "label": "3rd Floor", "value": 31, "tone": "brand" },
+      { "label": "2nd Floor", "value": 26, "tone": "low" },
+      { "label": "Lobby", "value": 20, "tone": "medium" },
+      { "label": "Warehouse", "value": 14, "tone": "high" },
+      { "label": "Parking", "value": 9, "tone": "neutral" }
+    ],
+    "centerLabel": "100%", "valueSuffix": "%",
+    "footnote": "Share of total zone traffic, 7d"
+  },
+  "wnm-top-fingerprints-traffic": {
+    "kind": "donut", "legend": "full",
+    "slices": [
+      { "label": "iOS", "value": 36, "tone": "brand" },
+      { "label": "Windows", "value": 28, "tone": "low" },
+      { "label": "macOS", "value": 18, "tone": "medium" },
+      { "label": "Android", "value": 12, "tone": "high" },
+      { "label": "IoT / Other", "value": 6, "tone": "neutral" }
+    ],
+    "centerLabel": "100%", "valueSuffix": "%",
+    "footnote": "Share of total traffic by device fingerprint, 7d"
+  },
+  "wnm-top-switches-traffic": {
+    "kind": "donut", "legend": "full",
+    "slices": [
+      { "label": "SW-Core-01", "value": 33, "tone": "brand" },
+      { "label": "SW-02", "value": 24, "tone": "low" },
+      { "label": "SW-9", "value": 19, "tone": "medium" },
+      { "label": "SW-Access-04", "value": 15, "tone": "high" },
+      { "label": "SW-Access-07", "value": 9, "tone": "neutral" }
+    ],
+    "centerLabel": "100%", "valueSuffix": "%",
+    "footnote": "Share of total switch traffic, 7d"
+  },
+  "wnm-traffic-by-port": {
+    "kind": "donut", "legend": "full",
+    "slices": [
+      { "label": "Port 1", "value": 29, "tone": "brand" },
+      { "label": "Port 3", "value": 24, "tone": "low" },
+      { "label": "Port 5", "value": 20, "tone": "medium" },
+      { "label": "Port 7", "value": 16, "tone": "high" },
+      { "label": "Port 9", "value": 11, "tone": "neutral" }
+    ],
+    "centerLabel": "100%", "valueSuffix": "%",
+    "footnote": "Share of total port traffic, SW-Core-01"
+  },
+  "wnm-top-poe-by-port": {
+    "kind": "donut", "legend": "full",
+    "slices": [
+      { "label": "Port 2", "value": 22, "tone": "brand" },
+      { "label": "Port 4", "value": 19, "tone": "low" },
+      { "label": "Port 6", "value": 18, "tone": "medium" },
+      { "label": "Port 8", "value": 16, "tone": "high" },
+      { "label": "Port 10", "value": 12, "tone": "neutral" }
+    ],
+    "centerLabel": "100%", "valueSuffix": "%",
+    "footnote": "Share of total PoE draw, SW-9"
+  },
+  "wnm-power-draw-by-port": {
+    "kind": "donut", "legend": "full",
+    "slices": [
+      { "label": "Port 2", "value": 34, "tone": "brand" },
+      { "label": "Port 4", "value": 28, "tone": "low" },
+      { "label": "Port 6", "value": 22, "tone": "medium" },
+      { "label": "Port 8", "value": 18, "tone": "high" },
+      { "label": "Port 10", "value": 12, "tone": "neutral" }
+    ],
+    "centerLabel": "114W", "valueSuffix": "W",
+    "footnote": "Power draw by port (watts), SW-9"
+  },
+
+  "cc-affected-devices": {
+    "kind": "kpi",
+    "items": [
+      { "label": "Affected", "value": 3, "tone": "critical" },
+      { "label": "Total Endpoints", "value": 128, "tone": "brand" }
+    ],
+    "note": "2.3% of fleet affected"
+  },
+  "cc-unresolved-threats": {
+    "kind": "kpi",
+    "items": [
+      { "label": "Unresolved", "value": 2, "tone": "critical" },
+      { "label": "Isolated", "value": 3, "tone": "high" }
+    ],
+    "note": "Auto-isolation active on 3 endpoints"
+  },
+  "cc-vulnerable-apps": {
+    "kind": "kpi",
+    "items": [
+      { "label": "Vulnerable Apps", "value": 4, "tone": "high" },
+      { "label": "Devices Affected", "value": 9, "tone": "medium" }
+    ],
+    "note": "CVSS ≥ 7.0 across managed endpoints"
+  },
+  "cc-premier-licenses": {
+    "kind": "kpi",
+    "items": [
+      { "label": "Active", "value": 118, "tone": "success" },
+      { "label": "Expiring &lt;30d", "value": 6, "tone": "medium" },
+      { "label": "Expired", "value": 4, "tone": "critical" }
+    ]
+  },
+  "cc-s1-agent-coverage": {
+    "kind": "list", "bar": true, "valueSuffix": "%",
+    "items": [
+      { "label": "Windows", "value": 96, "tone": "success" },
+      { "label": "macOS", "value": 89, "tone": "success" },
+      { "label": "Windows Server", "value": 100, "tone": "success" },
+      { "label": "Linux", "value": 72, "tone": "medium" },
+      { "label": "ChromeOS", "value": 41, "tone": "high" }
+    ],
+    "footnote": "S1 agent install coverage by platform"
+  },
+  "cc-threats-detected-by": {
+    "kind": "list", "bar": true,
+    "items": [
+      { "label": "SentinelOne Static AI", "value": 18 },
+      { "label": "SentinelOne Behavioral AI", "value": 11 },
+      { "label": "Capture ATP", "value": 7 },
+      { "label": "DNS Sandboxing", "value": 4 },
+      { "label": "Manual Quarantine", "value": 2 }
+    ],
+    "footnote": "Detections by engine, last 7 days"
+  },
+  "cc-threat-history-7d": {
+    "kind": "vbar",
+    "labels": ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+    "values": [4, 7, 3, 9, 6, 5, 2],
+    "thresholds": { "critical": 8, "high": 5 },
+    "footnote": "36 threats detected this week"
+  },
+  "cc-agent-coverage": {
+    "kind": "list", "bar": true, "valueSuffix": "%",
+    "items": [
+      { "label": "Tyrell Corp", "value": 100, "tone": "success" },
+      { "label": "Acme Tenant 1", "value": 98, "tone": "success" },
+      { "label": "Northgate Health", "value": 91, "tone": "success" },
+      { "label": "Westfield IT", "value": 84, "tone": "medium" },
+      { "label": "Cyberdyne Systems", "value": 76, "tone": "high" }
+    ],
+    "footnote": "Capture Client agent coverage by tenant"
+  },
+  "cc-top-blocked-categories": {
+    "kind": "list", "bar": true,
+    "items": [
+      { "label": "Phishing", "value": 214, "tone": "critical" },
+      { "label": "Malware Hosting", "value": 176, "tone": "critical" },
+      { "label": "Adult Content", "value": 98, "tone": "medium" },
+      { "label": "Gambling", "value": 54, "tone": "medium" },
+      { "label": "Proxy / Anonymizer", "value": 31, "tone": "high" }
+    ],
+    "footnote": "Blocked requests by category, 7d"
+  },
+  "cc-top-blocked-domains": {
+    "kind": "list", "bar": true,
+    "items": [
+      { "label": "malicious-cdn.net", "value": 88, "tone": "critical" },
+      { "label": "phish-mail.co", "value": 71, "tone": "critical" },
+      { "label": "adtrack-evil.com", "value": 54, "tone": "high" },
+      { "label": "botc2-relay.io", "value": 39, "tone": "high" },
+      { "label": "spam-redirect.biz", "value": 22, "tone": "medium" }
+    ],
+    "footnote": "Blocked domains, 7d"
+  },
+  "cc-top-blocked-users": {
+    "kind": "list", "bar": true,
+    "items": [
+      { "label": "jsmith@acme.com", "value": 42 },
+      { "label": "mwayne@wayne.com", "value": 35 },
+      { "label": "achen@northgate.com", "value": 29 },
+      { "label": "rpatel@tyrell.com", "value": 21 },
+      { "label": "kmoore@cyberdyne.com", "value": 14 }
+    ],
+    "footnote": "Blocked attempts by user, 7d"
+  },
+  "cc-top-threat-classification": {
+    "kind": "list", "bar": true,
+    "items": [
+      { "label": "Ransomware", "value": 3, "tone": "critical" },
+      { "label": "Trojan", "value": 2, "tone": "critical" },
+      { "label": "Botnet C2", "value": 1, "tone": "high" },
+      { "label": "Adware", "value": 2, "tone": "medium" },
+      { "label": "PUA", "value": 1, "tone": "low" }
+    ],
+    "footnote": "Active detections by classification"
+  },
+
+  "es-top-affected-tenants": {
+    "kind": "list", "bar": true,
+    "items": [
+      { "label": "Acme Tenant 1", "value": 3, "tone": "critical" },
+      { "label": "Westfield IT", "value": 2, "tone": "high" },
+      { "label": "Northgate Health", "value": 2, "tone": "high" },
+      { "label": "Tyrell Corp", "value": 1, "tone": "medium" },
+      { "label": "Cyberdyne Systems", "value": 1, "tone": "medium" }
+    ],
+    "footnote": "Tenants with active detections"
+  },
+  "es-threats": {
+    "kind": "donut", "legend": "full",
+    "slices": [
+      { "label": "Open", "value": 2, "tone": "critical" },
+      { "label": "Mitigated", "value": 3, "tone": "high" },
+      { "label": "Benign", "value": 2, "tone": "success" }
+    ],
+    "centerLabel": "7",
+    "footnote": "MTTD 4m &middot; 1 escalated"
+  },
+  "es-recent-detections": {
+    "kind": "list",
+    "items": [
+      { "label": "Ransomware.Locky &mdash; WIN-ACM-07", "sub": "Acme Tenant 1 &middot; 8m ago", "tone": "critical" },
+      { "label": "Botnet C2 &mdash; WEST-PC-14", "sub": "Westfield IT &middot; 34m ago", "tone": "critical" },
+      { "label": "Adware.Generic &mdash; NORTH-LT-22", "sub": "Northgate Health &middot; 1h ago", "tone": "medium" },
+      { "label": "Trojan.GenKD &mdash; TC-DESK-03", "sub": "Tyrell Corp &middot; 2h ago", "tone": "high" },
+      { "label": "PUA.Toolbar &mdash; CYB-LT-09", "sub": "Cyberdyne Systems &middot; 4h ago", "tone": "low" }
+    ],
+    "footnote": "5 most recent detections"
+  },
+  "es-web-attempts-blocked": {
+    "kind": "list", "bar": true,
+    "items": [
+      { "label": "Phishing", "value": 132, "tone": "critical" },
+      { "label": "Malware", "value": 97, "tone": "critical" },
+      { "label": "C2 Callback", "value": 41, "tone": "high" },
+      { "label": "Exploit Kit", "value": 18, "tone": "high" },
+      { "label": "Cryptomining", "value": 9, "tone": "medium" }
+    ],
+    "footnote": "Blocked web attempts by category, 7d"
+  },
+  "es-quick-action-plan": {
+    "kind": "data",
+    "items": [
+      { "title": "Patch CVE-2024-3400", "desc": "6 devices on Acme Tenant 1 remain exposed to active exploitation.", "actionLabel": "Deploy Patch", "tone": "critical" },
+      { "title": "Isolate infected endpoints", "desc": "3 endpoints flagged with ransomware indicators.", "actionLabel": "Isolate Now", "tone": "high" },
+      { "title": "Renew Capture Client license", "desc": "4 licenses expired &middot; $12K ARR at risk.", "actionLabel": "Renew", "tone": "medium" },
+      { "title": "Review blocked-domain list", "desc": "5 new malicious domains observed this week.", "actionLabel": "Review", "tone": "low" }
+    ]
+  },
+
+  "cse-overview": {
+    "kind": "kpi",
+    "items": [
+      { "label": "Licenses", "value": 2, "tone": "brand" },
+      { "label": "Devices", "value": 8, "tone": "brand" },
+      { "label": "Active Users", "value": 6, "tone": "success" },
+      { "label": "Policies", "value": 7, "tone": "low" }
+    ]
+  },
+  "cse-devices-by-os": {
+    "kind": "donut", "legend": "compact",
+    "slices": [
+      { "label": "Windows", "value": 5, "tone": "brand" },
+      { "label": "macOS", "value": 2, "tone": "low" },
+      { "label": "iOS", "value": 1, "tone": "medium" }
+    ],
+    "centerLabel": "8"
+  },
+  "cse-devices-by-trust": {
+    "kind": "donut", "legend": "compact",
+    "slices": [
+      { "label": "Trusted", "value": 6, "tone": "success" },
+      { "label": "Managed", "value": 1, "tone": "low" },
+      { "label": "Unmanaged", "value": 1, "tone": "critical" }
+    ],
+    "centerLabel": "8"
+  },
+  "cse-policies-by-status": {
+    "kind": "donut", "legend": "compact",
+    "slices": [
+      { "label": "Active", "value": 6, "tone": "success" },
+      { "label": "Draft", "value": 1, "tone": "medium" }
+    ],
+    "centerLabel": "7"
+  },
+  "cse-connectors-by-status": {
+    "kind": "donut", "legend": "compact",
+    "slices": [
+      { "label": "Online", "value": 3, "tone": "success" },
+      { "label": "Degraded", "value": 1, "tone": "medium" }
+    ],
+    "centerLabel": "4"
+  },
+  "cse-top10": {
+    "kind": "list", "bar": true,
+    "items": [
+      { "label": "app.acme-crm.com", "value": 4200 },
+      { "label": "mail.google.com", "value": 3100 },
+      { "label": "teams.microsoft.com", "value": 2680 },
+      { "label": "portal.workday.com", "value": 1950 },
+      { "label": "drive.google.com", "value": 1400 }
+    ],
+    "footnote": "Top destinations by session count, 7d"
+  }
+}
